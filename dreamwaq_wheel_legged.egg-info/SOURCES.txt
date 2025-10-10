@@ -1,0 +1,6 @@
+setup.py
+dreamwaq_wheel_legged.egg-info/PKG-INFO
+dreamwaq_wheel_legged.egg-info/SOURCES.txt
+dreamwaq_wheel_legged.egg-info/dependency_links.txt
+dreamwaq_wheel_legged.egg-info/requires.txt
+dreamwaq_wheel_legged.egg-info/top_level.txt
