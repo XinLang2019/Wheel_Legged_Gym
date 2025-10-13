@@ -102,7 +102,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
         control_type = 'P' # 位置控制、速度控制、扭矩控制
         
         stiffness = {'hip_joint': 400.,'thigh_joint': 400.,'calf_joint': 400.,"foot_joint":0}  # [N*m/rad] 刚度系数k_p 
-        damping = {'hip_joint': 10,'thigh_joint': 10,'calf_joint': 10, "foot_joint":2}     # [N*m*s/rad] 阻尼系数k_d
+        damping = {'hip_joint': 5,'thigh_joint': 5,'calf_joint': 5, "foot_joint":2}     # [N*m*s/rad] 阻尼系数k_d
         # action scale: target angle = actionScale * action + defaultAngle
         # 乘一个缩放因子，目的是让动作值适应不同关节的运动范围
         action_scale = 0.25
@@ -140,8 +140,8 @@ class B2WRoughCfg( LeggedRobotCfg ):
             tracking_ang_vel = 1.5 # 惩罚当前机器人在角度转向速度与命令不一致
             lin_vel_z = -1 # 惩罚机器人在Z轴上的速度 对应现象为机器人上下起伏很大
             ang_vel_xy = -0.05 # 惩罚机器人在X轴和Y轴上的角速度 对应现象为遏制机器人左右晃动和前后晃动
-            # orientation = -0.5 # 强烈鼓励机器人与初始姿态的基座方向一致
-            torques = -0.00001 # 机器人运控各电机输出的力矩的平方和 让模型找到最省力矩的方案
+            orientation = -0.5 # 强烈鼓励机器人与初始姿态的基座方向一致
+            torques = -0.000005 # 机器人运控各电机输出的力矩的平方和 让模型找到最省力矩的方案
             dof_vel = -1e-7
             dof_acc = -1e-7
             base_height = -10 # 惩罚基座高度不保持在期望的高度上
@@ -152,8 +152,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
             stand_still = -0.5
             dof_pos_limits = -0
             hip_action_l2 = -0
-            hip_default = -0.8 # 惩罚髋关节不在默认位置
-            dof_error = -0.1  # add dof penalty
+            hip_default = -0.5 # 惩罚髋关节不在默认位置
 
 class B2WRoughCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
@@ -164,7 +163,7 @@ class B2WRoughCfgPPO( LeggedRobotCfgPPO ):
         experiment_name = 'rough_b2w'
         num_steps_per_env = 24 # per iteration
         max_iterations = 30000
-        load_run = 'Oct11_09-26-01_'
+        load_run = -1
         checkpoint = -1
         resume = False
         resume_path = -1

@@ -1007,3 +1007,9 @@ class B2w(LeggedRobot):
         hip_err = torch.sum((self.dof_pos[:, [0, 4, 8, 12]] - self.default_dof_pos[:, [0, 4, 8, 12]]) ** 2, dim = 1)
         # print("penalty",penalty.shape)
         return hip_err
+    
+    def _reward_dof_error(self):
+        dof_index = [0,1,2,4,5,6,8,9,10,12,13,14]
+        dof_err = torch.sum((self.dof_pos[:, dof_index] - self.default_dof_pos[:, dof_index]) ** 2, dim = 1)
+        # print("penalty",penalty.shape)
+        return dof_err
