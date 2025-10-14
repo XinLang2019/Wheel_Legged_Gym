@@ -106,6 +106,8 @@ class LeggedRobotCfg(BaseConfig):
         Kp_factor_range = [0.9, 1.1]
         randomize_Kd_factor = True
         Kd_factor_range = [0.9, 1.1]
+        randomize_action_latency = False
+        latency_range = [0.00, 0.02]
 
     class rewards:
         class scales:

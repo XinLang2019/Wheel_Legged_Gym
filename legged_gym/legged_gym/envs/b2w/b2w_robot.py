@@ -2,6 +2,7 @@ from legged_gym import LEGGED_GYM_ROOT_DIR, envs
 from time import time
 from warnings import WarningMessage
 import numpy as np
+import random
 import os  
 
 from isaacgym.torch_utils import *
@@ -31,12 +32,22 @@ class B2w(LeggedRobot):
         self.obs_hist_buf = torch.cat((self.obs_hist_buf,self.obs_buf),dim = -1)
         self.prev_privileged_obs_buf = self.privileged_obs_buf
 
+        #for action latency
+        rng = self.latency_range
+        action_latency = random.randint(rng[0], rng[1])
 
         clip_actions = self.cfg.normalization.clip_actions # 将动作限制在clip_actions参数范围内
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
         self.render() # 渲染环境，可视化
         for _ in range(self.cfg.control.decimation): # 在每个控制周期中进行多少次物理步进
+            if (self.cfg.domain_rand.randomize_action_latency and _ < action_latency):
+                self.torques = self._compute_torques(self.last_actions).view(self.torques.shape)
+            else:
+                self.torques = self._compute_torques(self.actions).view(self.torques.shape)
+
+
+
             self.torques = self._compute_torques(self.actions).view(self.torques.shape) 
             # 根据action计算扭矩
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))

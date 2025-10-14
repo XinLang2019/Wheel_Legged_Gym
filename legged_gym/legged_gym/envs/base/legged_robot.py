@@ -47,6 +47,9 @@ class LeggedRobot(BaseTask):
         self._init_buffers()
         self._prepare_reward_function()
         self.init_done = True
+        
+        self.latency_range = [int((self.cfg.domain_rand.latency_range[0] + 1e-8) / self.sim_params.dt),
+                                int((self.cfg.domain_rand.latency_range[1] - 1e-8) / self.sim_params.dt) + 1]
 
     def step(self, actions):
         """ Apply actions, simulate, call self.post_physics_step()

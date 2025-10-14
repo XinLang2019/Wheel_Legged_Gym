@@ -124,6 +124,10 @@ class B2WRoughCfg( LeggedRobotCfg ):
         replace_cylinder_with_capsule = False
         flip_visual_attachments = False
     
+    class domain_rand(LeggedRobotCfg.domain_rand):
+        randomize_action_latency = True
+        latency_range = [0.00, 0.02]   # action delay
+
     # 奖励函数
     class rewards( LeggedRobotCfg.rewards ):
         only_positive_rewards = True # if true negative total rewards are clipped at zero (avoids early termination problems)

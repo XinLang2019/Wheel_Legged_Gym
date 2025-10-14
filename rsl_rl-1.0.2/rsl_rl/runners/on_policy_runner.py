@@ -162,11 +162,14 @@ class OnPolicyRunner:
             if it % self.save_interval == 0:
                 self.save(os.path.join(self.log_dir, 'model_{}.pt'.format(it)))
             ep_infos.clear()
+
+            if(it == 0):
+                os.system("cp ./legged_gym/envs/b2w/b2w_config.py " + self.log_dir + "/")
+
         
         self.current_learning_iteration += num_learning_iterations
-
         self.save(os.path.join(self.log_dir, 'model_{}.pt'.format(self.current_learning_iteration)))
-
+        
     def log(self, locs, width=80, pad=35):
         self.tot_timesteps += self.num_steps_per_env * self.env.num_envs
         self.tot_time += locs['collection_time'] + locs['learn_time']
