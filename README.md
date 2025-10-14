@@ -66,6 +66,11 @@ cd legged_gym
 python legged_gym/scripts/train.py --task=go2w --headless
 ```
 
+if you need train in different GPU :
+```bash
+python legged_gym/scripts/train.py --task=b2w --headless --sim_device=cuda:0 --rl_device=cuda:0
+```
+
 ### 2. play policy
 ```bash
 cd legged_gym

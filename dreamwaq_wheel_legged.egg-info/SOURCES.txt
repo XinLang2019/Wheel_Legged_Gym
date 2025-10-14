@@ -1,3 +1,4 @@
+README.md
 setup.py
 dreamwaq_wheel_legged.egg-info/PKG-INFO
 dreamwaq_wheel_legged.egg-info/SOURCES.txt
