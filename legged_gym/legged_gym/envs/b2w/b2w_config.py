@@ -57,15 +57,15 @@ class B2WRoughCfg( LeggedRobotCfg ):
             'FR_hip_joint': 0.0 ,  # [rad]
             'RR_hip_joint': 0.0,   # [rad]
 
-            'FL_thigh_joint': 0.67,     # [rad]
-            'RL_thigh_joint': 0.67,   # [rad]
-            'FR_thigh_joint': 0.67,     # [rad]
-            'RR_thigh_joint': 0.67,   # [rad]
+            'FL_thigh_joint': 0.8,     # [rad]
+            'RL_thigh_joint': 0.8,   # [rad]
+            'FR_thigh_joint': 0.8,     # [rad]
+            'RR_thigh_joint': 0.8,   # [rad]
 
-            'FL_calf_joint': -1.3,   # [rad]
-            'RL_calf_joint': -1.3,    # [rad]
-            'FR_calf_joint': -1.3,  # [rad]
-            'RR_calf_joint': -1.3,    # [rad]
+            'FL_calf_joint': -1.5,   # [rad]
+            'RL_calf_joint': -1.5,    # [rad]
+            'FR_calf_joint': -1.5,  # [rad]
+            'RR_calf_joint': -1.5,    # [rad]
             
             'FL_foot_joint':0.0,
             'RL_foot_joint':0.0,
@@ -79,15 +79,15 @@ class B2WRoughCfg( LeggedRobotCfg ):
             'FR_hip_joint': 0.0 ,  # [rad]
             'RR_hip_joint': 0.0,   # [rad]
 
-            'FL_thigh_joint': 0.67,     # [rad] 大腿
-            'RL_thigh_joint': 0.67,   # [rad]
-            'FR_thigh_joint': 0.67,     # [rad]
-            'RR_thigh_joint': 0.67,   # [rad]
+            'FL_thigh_joint': 0.8,     # [rad] 大腿
+            'RL_thigh_joint': 0.8,   # [rad]
+            'FR_thigh_joint': 0.8,     # [rad]
+            'RR_thigh_joint': 0.8,   # [rad]
 
-            'FL_calf_joint': -1.3,   # [rad] 小腿
-            'RL_calf_joint': -1.3,    # [rad]
-            'FR_calf_joint': -1.3,  # [rad]
-            'RR_calf_joint': -1.3,    # [rad] 
+            'FL_calf_joint': -1.5,   # [rad] 小腿
+            'RL_calf_joint': -1.5,    # [rad]
+            'FR_calf_joint': -1.5,  # [rad]
+            'RR_calf_joint': -1.5,    # [rad] 
 
             'FL_foot_joint':0.0, # 轮足
             'RL_foot_joint':0.0,
@@ -100,8 +100,8 @@ class B2WRoughCfg( LeggedRobotCfg ):
         # PD Drive parameters:
         control_type = 'P' # 位置控制、速度控制、扭矩控制
         
-        stiffness = {'hip_joint': 200.,'thigh_joint': 200.,'calf_joint': 200.,"foot_joint":0}  # [N*m/rad] 刚度系数k_p 
-        damping = {'hip_joint': 5,'thigh_joint': 5,'calf_joint': 5, "foot_joint":0.5}     # [N*m*s/rad] 阻尼系数k_d
+        stiffness = {'hip_joint': 400.,'thigh_joint': 400.,'calf_joint': 400.,"foot_joint":0}  # [N*m/rad] 刚度系数k_p 
+        damping = {'hip_joint': 20,'thigh_joint': 20,'calf_joint': 20, "foot_joint":5}     # [N*m*s/rad] 阻尼系数k_d
         # action scale: target angle = actionScale * action + defaultAngle
         # 乘一个缩放因子，目的是让动作值适应不同关节的运动范围
         action_scale = 0.25
@@ -123,6 +123,10 @@ class B2WRoughCfg( LeggedRobotCfg ):
         replace_cylinder_with_capsule = False
         flip_visual_attachments = False
     
+    class domain_rand(LeggedRobotCfg.domain_rand):
+        randomize_action_latency = False
+        latency_range = [0.00, 0.02]   # action delay
+
     # 奖励函数
     class rewards( LeggedRobotCfg.rewards ):
         only_positive_rewards = True # if true negative total rewards are clipped at zero (avoids early termination problems)

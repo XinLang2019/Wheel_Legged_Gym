@@ -162,7 +162,7 @@ class GO2WRoughCfgPPO( LeggedRobotCfgPPO ):
         experiment_name = 'rough_go2w'
         num_steps_per_env = 24 # per iteration
         max_iterations = 30000
-        load_run = 'Oct09_18-27-11_'
+        load_run = -1
         checkpoint = -1
         resume = False
         resume_path = -1

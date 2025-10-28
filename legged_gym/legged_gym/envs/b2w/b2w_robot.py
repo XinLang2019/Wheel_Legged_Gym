@@ -16,6 +16,7 @@ from legged_gym.utils.terrain import Terrain
 from legged_gym.utils.math import quat_apply_yaw, wrap_to_pi, torch_rand_sqrt_float, get_scale_shift
 from legged_gym.utils.helpers import class_to_dict
 from .b2w_config import B2WRoughCfg
+import random
 
 class B2w(LeggedRobot):
     cfg: B2WRoughCfg
@@ -28,16 +29,25 @@ class B2w(LeggedRobot):
         """
         
         self.obs_hist_buf = self.obs_hist_buf[:,73:]
-        self.obs_hist_buf = torch.cat((self.obs_hist_buf,self.obs_buf),dim = -1)
+        self.obs_hist_buf = torch.cat((self.obs_hist_buf, self.obs_buf),dim = -1)
         self.prev_privileged_obs_buf = self.privileged_obs_buf
 
+        #for action latency
+        rng = self.latency_range
+        action_latency = random.randint(rng[0], rng[1])
+        
 
         clip_actions = self.cfg.normalization.clip_actions # 将动作限制在clip_actions参数范围内
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
         self.render() # 渲染环境，可视化
         for _ in range(self.cfg.control.decimation): # 在每个控制周期中进行多少次物理步进
-            self.torques = self._compute_torques(self.actions).view(self.torques.shape) 
+            if (self.cfg.domain_rand.randomize_action_latency and _ < action_latency):
+                self.torques = self._compute_torques(self.last_actions).view(self.torques.shape)
+            else:
+                self.torques = self._compute_torques(self.actions).view(self.torques.shape)
+            # self.torques = self._compute_torques(self.actions).view(self.torques.shape) 
+
             # 根据action计算扭矩
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
             # 将计算得到的扭矩应用到仿真环境中的关节上。
@@ -411,6 +421,7 @@ class B2w(LeggedRobot):
         #pd controller
         dof_err = self.default_dof_pos - self.dof_pos # 各DOF默认位置 - 目前各DOF位置
         dof_err[:,self.wheel_indices] =  0 # 轮子的误差是0
+
         actions_scaled = actions * self.cfg.control.action_scale # action * 0.25
         actions_scaled[:, self.wheel_indices] = 0 # 轮子使用速度控制，角度增量为0
         vel_ref = torch.zeros_like(actions_scaled)
@@ -564,6 +575,7 @@ class B2w(LeggedRobot):
         self.extras = {}
         self.noise_scale_vec = self._get_noise_scale_vec(self.cfg)
         self.gravity_vec = to_torch(get_axis_params(-1., self.up_axis_idx), device=self.device).repeat((self.num_envs, 1))
+        
         # 为所有机器人创造相同的重力向量
         self.forward_vec = to_torch([1., 0., 0.], device=self.device).repeat((self.num_envs, 1))
         self.torques = torch.zeros(self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False)

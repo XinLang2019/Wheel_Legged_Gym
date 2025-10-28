@@ -260,4 +260,53 @@ class PolicyExporterLSTM(torch.nn.Module):
         traced_script_module = torch.jit.script(self)
         traced_script_module.save(path)
 
+#====================== export dreamwaq policy as pit ===============================
+def export_policy_dreamwaq_as_jit(actor_critic, path):
+    exporter = PolicyExporterDreamWaq(actor_critic)
+    exporter.export(path)
+
+def export_policy_dreamwaq_as_onnx(actor_critic, path):
+    exporter = PolicyExporterDreamWaq(actor_critic).cpu().eval()
+    device = torch.device('cpu')
+    exporter = exporter.to(device)#.cpu()
+    exporter.eval()
+    with torch.no_grad():
+        if not os.path.exists(os.path.join(path, "traced")):
+            os.mkdir(os.path.join(path, "traced"))
+        save_path = os.path.join(path, "traced", "policy_1.onnx")
+
+        # 构造 dummy 输入
+        B = 1
+        obs = torch.zeros(B, 73, dtype=torch.float32, device=device)
+        obs_history = torch.zeros(B, 365, dtype=torch.float32,device=device)
+
+        torch.onnx.export(
+        exporter,
+        (obs, obs_history),
+        save_path,
+        input_names=["obs", "obs_hist"],
+        output_names=["action"],
+        opset_version=17,
+        )
+        print(f"locomotion policy exported to {os.path.abspath(save_path)}")
+
+class PolicyExporterDreamWaq(torch.nn.Module):
+    def __init__(self, actor_critic):
+        super().__init__()
+        self.actor = copy.deepcopy(actor_critic.actor)
+        self.vae = copy.deepcopy(actor_critic.vae)
+
+    def forward(self, observations, obs_history):
+        estimation, latent_params = self.vae(obs_history)
+        z, v = estimation
+        observations = torch.cat((z, v, observations),dim=-1)
+        actions_mean = self.actor(observations)
+        return actions_mean
     
+    def export(self, path):
+        os.makedirs(path, exist_ok=True)
+        path = os.path.join(path, 'policy_dreamwaq_1.pt')
+        self.to('cpu')
+        traced_script_module = torch.jit.script(self)
+        traced_script_module.save(path)
+

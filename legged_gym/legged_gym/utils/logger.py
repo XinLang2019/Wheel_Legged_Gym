@@ -62,6 +62,18 @@ class Logger:
         self.plot_process = Process(target=self._plot)
         self.plot_process.start()
 
+    def plot_data(self, data1, data2=None):
+        nb_rows = 4
+        nb_cols = 4
+        fig, axs = plt.subplots(nb_rows, nb_cols, figsize=(15, 10))
+        axs = axs.flatten()
+           
+        data1 = np.array(data1)
+        print(data1.shape)
+        for i in range(16):
+            axs[i].plot(data1[:, i])
+        plt.show()
+
     def _plot(self):
         nb_rows = 7
         nb_cols = 3

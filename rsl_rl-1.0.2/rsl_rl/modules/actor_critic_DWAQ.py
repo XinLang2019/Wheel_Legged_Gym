@@ -156,7 +156,7 @@ class ActorCritic_DWAQ(nn.Module):
     def get_actions_log_prob(self, actions):
         return self.distribution.log_prob(actions).sum(dim=-1)
 
-    def act_inference(self, observations,obs_history):
+    def act_inference(self, observations, obs_history):
         estimation, latent_params = self.vae(obs_history)
         z, v = estimation
         observations = torch.cat((z, v, observations),dim=-1)
