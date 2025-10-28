@@ -102,11 +102,8 @@ class B2WRoughCfg( LeggedRobotCfg ):
         control_type = 'P' # 位置控制、速度控制、扭矩控制
         
         stiffness = {'hip_joint': 400.,'thigh_joint': 400.,'calf_joint': 400.,"foot_joint":0}  # [N*m/rad] 刚度系数k_p 
-<<<<<<< HEAD
         damping = {'hip_joint': 20,'thigh_joint': 20,'calf_joint': 20, "foot_joint":5}     # [N*m*s/rad] 阻尼系数k_d
-=======
-        damping = {'hip_joint': 5,'thigh_joint': 5,'calf_joint': 5, "foot_joint":2}     # [N*m*s/rad] 阻尼系数k_d
->>>>>>> 6144468823224bb2d389a0030340ea58e1443858
+
         # action scale: target angle = actionScale * action + defaultAngle
         # 乘一个缩放因子，目的是让动作值适应不同关节的运动范围
         action_scale = 0.25
