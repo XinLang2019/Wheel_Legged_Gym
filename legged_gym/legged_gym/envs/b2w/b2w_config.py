@@ -22,6 +22,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
             ang_vel_yaw = [-1, 1.0]    # min max [r ad/s] 角速度
             heading = [-3.14, 3.14] # 航向 实际上没有使用这个维度
 
+
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = 'trimesh' # "heightfield" # none, plane, heightfield or trimesh
         horizontal_scale = 0.1 # [m]
@@ -101,7 +102,11 @@ class B2WRoughCfg( LeggedRobotCfg ):
         control_type = 'P' # 位置控制、速度控制、扭矩控制
         
         stiffness = {'hip_joint': 400.,'thigh_joint': 400.,'calf_joint': 400.,"foot_joint":0}  # [N*m/rad] 刚度系数k_p 
+<<<<<<< HEAD
         damping = {'hip_joint': 20,'thigh_joint': 20,'calf_joint': 20, "foot_joint":5}     # [N*m*s/rad] 阻尼系数k_d
+=======
+        damping = {'hip_joint': 5,'thigh_joint': 5,'calf_joint': 5, "foot_joint":2}     # [N*m*s/rad] 阻尼系数k_d
+>>>>>>> 6144468823224bb2d389a0030340ea58e1443858
         # action scale: target angle = actionScale * action + defaultAngle
         # 乘一个缩放因子，目的是让动作值适应不同关节的运动范围
         action_scale = 0.25
@@ -118,7 +123,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
         foot_name = "foot"
         wheel_name =["foot"] 
         penalize_contacts_on = ["thigh", "calf", "base"] # 惩罚接触
-        terminate_after_contacts_on = []
+        terminate_after_contacts_on = ["base"]
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter "base","calf","hip","thigh"
         replace_cylinder_with_capsule = False
         flip_visual_attachments = False
@@ -135,7 +140,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
         soft_dof_vel_limit = 1.
         soft_torque_limit = 1.
         base_height_target = 0.5   #TODO
-        max_contact_force = 100. # forces above this value are penalized
+        max_contact_force = 200. # forces above this value are penalized
        
         class scales( LeggedRobotCfg.rewards.scales ):
             termination = -0.8 # 25/8/23 zsy说不用加
@@ -144,10 +149,10 @@ class B2WRoughCfg( LeggedRobotCfg ):
             lin_vel_z = -1 # 惩罚机器人在Z轴上的速度 对应现象为机器人上下起伏很大
             ang_vel_xy = -0.05 # 惩罚机器人在X轴和Y轴上的角速度 对应现象为遏制机器人左右晃动和前后晃动
             orientation = -0.5 # 强烈鼓励机器人与初始姿态的基座方向一致
-            torques = -0.0001 # 机器人运控各电机输出的力矩的平方和 让模型找到最省力矩的方案
+            torques = -0.000005 # 机器人运控各电机输出的力矩的平方和 让模型找到最省力矩的方案
             dof_vel = -1e-7
             dof_acc = -1e-7
-            base_height = -0 # 惩罚基座高度不保持在期望的高度上
+            base_height = -10 # 惩罚基座高度不保持在期望的高度上
             feet_air_time =  0.5
             collision = -1
             feet_stumble = -0.1
@@ -159,7 +164,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
 
 class B2WRoughCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
-        entropy_coef = 0.01
+        entropy_coef = 0.005
         learning_rate = 1.e-3
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
